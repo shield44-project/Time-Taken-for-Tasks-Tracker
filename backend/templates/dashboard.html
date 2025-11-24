@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </h2>
+    </div>
+</div>
+
+<div class="row mb-4" id="stats-cards">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total Tasks</h5>
+                <h2 class="mb-0" id="total-tasks">0</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Completed</h5>
+                <h2 class="mb-0" id="completed-tasks">0</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">In Progress</h5>
+                <h2 class="mb-0" id="in-progress-tasks">0</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total Time (hrs)</h5>
+                <h2 class="mb-0" id="total-time">0</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Active Timer</h5>
+            </div>
+            <div class="card-body" id="active-timer">
+                <p class="text-muted">No active timer</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Tasks</h5>
+            </div>
+            <div class="card-body">
+                <div id="recent-tasks" class="list-group list-group-flush">
+                    <p class="text-muted">Loading tasks...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Load dashboard data
+    async function loadDashboard() {
+        try {
+            const response = await fetch('/api/analytics/summary');
+            const data = await response.json();
+            
+            document.getElementById('total-tasks').textContent = data.total_tasks;
+            document.getElementById('completed-tasks').textContent = data.completed_tasks;
+            document.getElementById('in-progress-tasks').textContent = data.in_progress_tasks;
+            document.getElementById('total-time').textContent = data.total_time;
+        } catch (error) {
+            console.error('Error loading dashboard:', error);
+        }
+    }
+    
+    async function loadRecentTasks() {
+        try {
+            const response = await fetch('/api/tasks?user_id={{ current_user.id }}');
+            const tasks = await response.json();
+            
+            const container = document.getElementById('recent-tasks');
+            
+            if (tasks.length === 0) {
+                container.innerHTML = '<p class="text-muted">No tasks yet</p>';
+                return;
+            }
+            
+            container.innerHTML = tasks.slice(0, 5).map(task => `
+                <a href="/tasks" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">${task.title}</h6>
+                        <small class="badge bg-${getStatusColor(task.status)}">${task.status}</small>
+                    </div>
+                    <small class="text-muted">${task.category}</small>
+                </a>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading tasks:', error);
+        }
+    }
+    
+    async function loadActiveTimer() {
+        try {
+            const response = await fetch('/api/timelogs/active');
+            const log = await response.json();
+            
+            const container = document.getElementById('active-timer');
+            
+            if (!log) {
+                container.innerHTML = '<p class="text-muted">No active timer</p>';
+                return;
+            }
+            
+            // Get task details
+            const taskResponse = await fetch(`/api/tasks/${log.task_id}`);
+            const task = await taskResponse.json();
+            
+            container.innerHTML = `
+                <h5>${task.title}</h5>
+                <p class="mb-2">Started: ${new Date(log.start_time).toLocaleString()}</p>
+                <button class="btn btn-danger" onclick="stopTimer(${log.id})">
+                    <i class="bi bi-stop-circle"></i> Stop Timer
+                </button>
+            `;
+        } catch (error) {
+            console.error('Error loading active timer:', error);
+        }
+    }
+    
+    async function stopTimer(logId) {
+        try {
+            await fetch(`/api/timelogs/${logId}/stop`, { method: 'PUT' });
+            loadActiveTimer();
+            loadDashboard();
+        } catch (error) {
+            console.error('Error stopping timer:', error);
+        }
+    }
+    
+    function getStatusColor(status) {
+        const colors = {
+            'pending': 'secondary',
+            'in_progress': 'warning',
+            'completed': 'success',
+            'on_hold': 'danger'
+        };
+        return colors[status] || 'secondary';
+    }
+    
+    // Load on page load
+    loadDashboard();
+    loadRecentTasks();
+    loadActiveTimer();
+    
+    // Refresh every 30 seconds
+    setInterval(() => {
+        loadDashboard();
+        loadActiveTimer();
+    }, 30000);
+</script>
+{% endblock %}
