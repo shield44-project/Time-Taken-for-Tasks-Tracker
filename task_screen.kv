@@ -1,0 +1,43 @@
+<TaskScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1, 0.1)
+            padding: 10
+            spacing: 10
+
+            Button:
+                text: 'Add Task'
+                on_press: root.show_add_task_popup()
+                size_hint: (0.3, 1)
+
+            Button:
+                text: 'Refresh'
+                on_press: root.refresh_tasks()
+                size_hint: (0.3, 1)
+
+            Button:
+                text: 'OEE'
+                on_press: root.manager.get_screen('oee_screen').load_equipment()
+                size_hint: (0.3, 1)
+
+            Button:
+                text: 'Pareto'
+                on_press: root.manager.get_screen('pareto_screen').generate_pareto()
+                size_hint: (0.3, 1)
+
+            Button:
+                text: 'Gantt'
+                on_press: root.manager.get_screen('gantt_screen').generate_gantt()
+                size_hint: (0.3, 1)
+
+        ScrollView:
+            BoxLayout:
+                id: task_container
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 5
+                padding: 5
