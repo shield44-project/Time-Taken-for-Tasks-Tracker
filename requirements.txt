@@ -1,3 +1,4 @@
-kivy
-kivymd
-matplotlib
+PySide6>=6.5
+PySide6-QtWebEngine
+plotly>=5.0
+qdarktheme
