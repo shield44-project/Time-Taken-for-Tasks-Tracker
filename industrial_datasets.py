@@ -272,6 +272,13 @@ def get_category_for_group(group_name):
     return None
 
 
+def get_group_description(group_name):
+    """Get the description for a specific task group."""
+    if group_name in INDUSTRIAL_TASKS:
+        return INDUSTRIAL_TASKS[group_name]["description"]
+    return None
+
+
 def get_all_tasks_flat():
     """
     Get all tasks as a flat list with full details.

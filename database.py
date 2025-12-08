@@ -59,6 +59,7 @@ class Database:
         VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (task_name, description, assigned_to, standard_time, parent_task_id, 'Pending', category))
         conn.commit()
+        return cursor.lastrowid
 
     def start_task(self, task_id):
         conn = self.connect()

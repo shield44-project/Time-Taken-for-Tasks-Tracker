@@ -178,9 +178,11 @@ Description: {t[2] or 'N/A'}
         
         group_list = QListWidget()
         for group in groups:
-            group_data = industrial_datasets.INDUSTRIAL_TASKS[group]
-            item_text = f"{group} - {group_data['description']}"
-            group_list.addItem(item_text)
+            description = industrial_datasets.get_group_description(group)
+            item_text = f"{group} - {description}"
+            item = QListWidgetItem(item_text)
+            item.setData(1000, group)  # Store group name as data
+            group_list.addItem(item)
         layout.addWidget(group_list)
         
         buttons = QHBoxLayout()
@@ -198,8 +200,7 @@ Description: {t[2] or 'N/A'}
                 QMessageBox.warning(dlg, "Error", "Please select a task group")
                 return
             
-            selected_text = group_list.currentItem().text()
-            group_name = selected_text.split(" - ")[0]
+            group_name = group_list.currentItem().data(1000)
             self._load_task_group(group_name)
             dlg.accept()
         
@@ -223,8 +224,8 @@ Description: {t[2] or 'N/A'}
             return
         
         # Create parent task for the group
-        parent_desc = industrial_datasets.INDUSTRIAL_TASKS[group_name]['description']
-        self.db.add_task(
+        parent_desc = industrial_datasets.get_group_description(group_name)
+        parent_id = self.db.add_task(
             task_name=group_name,
             description=parent_desc,
             assigned_to="Industrial Engineering",
@@ -233,11 +234,7 @@ Description: {t[2] or 'N/A'}
             category=category
         )
         
-        # Get the parent task ID
-        all_tasks = self.db.get_all_tasks()
-        parent_id = all_tasks[-1][0]  # Last inserted task
-        
-        # Add all subtasks
+        # Add all subtasks using the returned parent_id
         for task_key, task_data in tasks.items():
             self.db.add_task(
                 task_name=task_data['name'],
