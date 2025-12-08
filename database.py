@@ -30,7 +30,8 @@ class Database:
             standard_time REAL,
             efficiency REAL,
             status TEXT,
-            parent_task_id INTEGER
+            parent_task_id INTEGER,
+            category TEXT
         )
         ''')
 
@@ -50,14 +51,15 @@ class Database:
 
     # === TASK METHODS ===
 
-    def add_task(self, task_name, description, assigned_to, standard_time=0, parent_task_id=None):
+    def add_task(self, task_name, description, assigned_to, standard_time=0, parent_task_id=None, category=None):
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute('''
-        INSERT INTO tasks (task_name, description, assigned_to, standard_time, parent_task_id, status)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ''', (task_name, description, assigned_to, standard_time, parent_task_id, 'Pending'))
+        INSERT INTO tasks (task_name, description, assigned_to, standard_time, parent_task_id, status, category)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (task_name, description, assigned_to, standard_time, parent_task_id, 'Pending', category))
         conn.commit()
+        return cursor.lastrowid
 
     def start_task(self, task_id):
         conn = self.connect()
@@ -110,14 +112,14 @@ class Database:
         cursor.execute('SELECT * FROM tasks WHERE id = ?', (task_id,))
         return cursor.fetchone()
 
-    def update_task(self, task_id, task_name, description, assigned_to, standard_time, parent_task_id=None):
+    def update_task(self, task_id, task_name, description, assigned_to, standard_time, parent_task_id=None, category=None):
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute('''
         UPDATE tasks
-        SET task_name = ?, description = ?, assigned_to = ?, standard_time = ?, parent_task_id = ?
+        SET task_name = ?, description = ?, assigned_to = ?, standard_time = ?, parent_task_id = ?, category = ?
         WHERE id = ?
-        ''', (task_name, description, assigned_to, standard_time, parent_task_id, task_id))
+        ''', (task_name, description, assigned_to, standard_time, parent_task_id, category, task_id))
         conn.commit()
 
     def delete_task(self, task_id):
