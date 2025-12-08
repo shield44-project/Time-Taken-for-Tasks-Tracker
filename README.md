@@ -4,6 +4,47 @@ This project is a **Time Taken for Tasks Tracker** designed for **Industrial Eng
 
 ---
 
+## 🏭 **Industrial Task Datasets**
+
+The application now includes **pre-configured industrial task templates** that demonstrate real-world use cases. These datasets help users understand how the tracker can be applied in various industrial settings.
+
+### **Available Task Categories:**
+- **MANUFACTURING** - Production and fabrication operations
+- **MAINTENANCE** - Equipment maintenance and repair
+- **QUALITY** - Quality control and inspection
+- **LOGISTICS** - Material handling and warehouse operations
+- **ENGINEERING** - Design, analysis, and process improvement
+
+### **Pre-loaded Task Templates:**
+
+| Task Group | Category | Example Tasks | Use Case |
+|-----------|----------|---------------|----------|
+| **CNC_MACHINING** | Manufacturing | Setup, Calibration, Batch Run, Inspection, Cleanup | CNC machine operations with standard times |
+| **WELDING** | Manufacturing | Material Prep, Welding, Grinding, Inspection | Metal fabrication workflows |
+| **MAINTENANCE** | Maintenance | Lockout, Fluid Change, Lubrication, Alignment, Test | Preventive maintenance procedures |
+| **ASSEMBLY_LINE** | Manufacturing | Station Setup, Component Assembly, Quality Check, Packaging | Assembly line operations |
+| **QUALITY_CONTROL** | Quality | Incoming Inspection, Dimensional Inspection, Functional Test, Documentation | QC processes |
+| **LOGISTICS** | Logistics | Receiving, Inventory, Picking, Shipping | Warehouse operations |
+| **ENGINEERING** | Engineering | Design Review, Process Study, Documentation, Root Cause | Engineering tasks |
+
+### **How to Use Sample Tasks:**
+1. Click the **"Load Sample Tasks"** button in the Tasks screen
+2. Select a task group (e.g., CNC_MACHINING, WELDING)
+3. Click **"Load Selected"** to load that group, or **"Load All"** to load all industrial templates
+4. Each task group is loaded with:
+   - A parent task representing the operation type
+   - Multiple subtasks with predefined standard times
+   - Proper category assignments
+   - Realistic task descriptions and assignments
+
+This feature is particularly useful for:
+- **Training and demonstrations** - Show how the tracker works with realistic data
+- **Benchmarking** - Compare your operations against industry-standard times
+- **Process templates** - Use as starting points for your own operations
+- **Industrial engineering education** - Learn time study and work measurement principles
+
+---
+
 ## 📌 **Features**
 
 The application includes the following **industrial engineering features**:
@@ -30,13 +71,23 @@ The application includes the following **industrial engineering features**:
   \text{Efficiency} = \frac{\text{Actual Time}}{\text{Standard Time}} \times 100\%
   \]
 
-### 2. Work Breakdown Structure (WBS)
+### 2. Task Categories
+- **Industrial Categories:** Tasks can be assigned to one of five industrial categories:
+  - MANUFACTURING
+  - MAINTENANCE
+  - QUALITY
+  - LOGISTICS
+  - ENGINEERING
+- **Category-based Organization:** Filter and analyze tasks by category to understand where time is being spent across different operational areas.
+- **Visual Indicators:** Categories are displayed alongside task names for easy identification.
+
+### 3. Work Breakdown Structure (WBS)
 - **Parent-Child Task Relationship:**  
   Each task can optionally have a **parent task**, allowing users to organize tasks into a **hierarchical structure**.
 - **Tree View Display:**  
   Tasks are displayed in a **tree view**, where parent tasks are shown with expandable/collapsible subtasks.
 
-### 3. Overall Equipment Effectiveness (OEE)
+### 4. Overall Equipment Effectiveness (OEE)
 - **Track Equipment Performance:**  
   Users can add equipment and track:
   - **Planned Time**
@@ -54,29 +105,33 @@ The application includes the following **industrial engineering features**:
   - **Performance** = \(\frac{\text{Actual Output}}{\text{Standard Output} \times \text{Available Time}}\)
   - **Quality** = \(\frac{\text{Good Units}}{\text{Total Units Produced}}\)
 
-### 4. Pareto Analysis (80/20 Rule)
+### 5. Pareto Analysis (80/20 Rule)
 - **Identify Critical Tasks:**  
   After tasks are completed, the application identifies the **top 20% of tasks** that consume **80% of the total time**.
 - **Pareto Chart:**  
   A chart is generated using **Matplotlib**, showing the cumulative percentage of time consumed by tasks.
 
-### 5. Gantt Chart
+### 6. Gantt Chart
 - **Visualize Task Scheduling:**  
   Displays a **Gantt chart** showing the **start and end times** of each task, helping to visualize project progress.
 
 ---
 
 ## 📁 **Project Structure**
+```
 Time_Tracker/
 │
-├── main.py              # Main Application (Kivy GUI)
-├── database.py          # SQLite Database Handling
-├── task_screen.kv      # Task Management UI
-├── pareto_screen.kv     # Pareto Analysis UI
-├── gantt_screen.kv      # Gantt Chart UI
-├── oee_screen.kv       # OEE Tracking UI
-├── requirements.txt     # Python dependencies
-└── README.md            # This file
+├── main.py                 # Main Application (PySide6 GUI)
+├── database.py             # SQLite Database Handling
+├── task_screen.py          # Task Management Screen
+├── pareto_screen.py        # Pareto Analysis Screen
+├── gantt_screen.py         # Gantt Chart Screen
+├── oee_screen.py           # OEE Tracking Screen
+├── plotly_widget.py        # Plotly Chart Integration
+├── industrial_datasets.py  # Pre-configured Industrial Task Templates
+├── requirements.txt        # Python dependencies
+└── README.md               # This file
+```
 
 ---
 
