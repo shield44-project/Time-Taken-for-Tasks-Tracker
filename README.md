@@ -145,7 +145,11 @@ cd Time_Tracker
 
 
 ```bash
-pip install -r requirements.txt && python main.py
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python main.py
+# to get out of the env use ``deactivate``
 
 
 
